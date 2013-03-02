@@ -1,4 +1,4 @@
-SplotFoundation
+Splot Foundation
 ===============
 By Michał Dudek
 
