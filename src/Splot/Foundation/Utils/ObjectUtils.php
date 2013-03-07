@@ -257,7 +257,7 @@ class ObjectUtils
      * @return string
      */
     public static function getter($property) {
-        return 'get'. StringUtils::toCamelCase($property, '_');
+        return 'get'. ucfirst(StringUtils::toCamelCase($property, '_'));
     }
 
     /**
@@ -267,7 +267,7 @@ class ObjectUtils
      * @return string
      */
     public static function setter($property) {
-        return 'set'. StringUtils::toCamelCase($property, '_');
+        return 'set'. ucfirst(StringUtils::toCamelCase($property, '_'));
     }
     
 }
