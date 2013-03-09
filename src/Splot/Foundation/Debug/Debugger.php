@@ -13,7 +13,6 @@ namespace Splot\Foundation\Debug;
 
 use Splot\Foundation\Utils\StringUtils;
 use Splot\Foundation\Utils\ArrayUtils;
-use Splot\Foundation\Debug\Logger;
 use Splot\Foundation\Debug\Timer;
 use Splot\Foundation\Debug\Interfaces\Dumpable;
 
@@ -184,27 +183,6 @@ class Debugger
         return $prettyTrace;
     }
 
-    /**
-     * Logs the current memory usage (and the peak up to this point).
-     * 
-     * @param string $usage Whatever you want to name the current test.
-     * @return array Array containing memory current usage and memory peak up to this point.
-     */
-    public static function logMemory($usage) {
-        $memoryPeak = memory_get_peak_usage(true);
-        $memoryCurrent = memory_get_usage(true);
-
-        Logger::log('Memory usage at '. $usage .' - '. StringUtils::bytesToString($memoryCurrent) .' ('. $memoryCurrent .' bytes)', 'Memory', array(
-            'current' => $memoryCurrent,
-            'peak' => $memoryPeak
-        ));
-
-        return array(
-            'current' => $memoryCurrent,
-            'peak' => $memoryPeak
-        );
-    }
-
     /*
      * ERROR HANDLING
      */
@@ -222,7 +200,7 @@ class Debugger
         $code = $e->getCode();
         $name = get_class($e);
         $trace = self::getPrettyTrace($e->getTrace());
-        $log = Logger::getLog();
+        $log = array();//Logger::getLog();
 
         $exceptionPage = realpath(dirname(__FILE__) .'/../../../') .'/error.php';
         include $exceptionPage;
@@ -249,7 +227,7 @@ class Debugger
         $name = '';
         $file = $file .' ('. $line .')';
         $trace = self::getPrettyTrace(debug_backtrace());
-        $log = Logger::getLog();
+        $log = array();//Logger::getLog();
 
         switch($code) {
             case E_ERROR:           $name = 'Fatal Error';          break;

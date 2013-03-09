@@ -11,7 +11,7 @@
  */
 namespace Splot\Foundation\Debug;
 
-use Splot\Foundation\Debug\TimerLap;
+use Splot\Foundation\Debug\TimerStep;
 
 class Timer
 {
@@ -59,18 +59,18 @@ class Timer
     protected $_stopMemoryPeak;
 
     /**
-     * Holds a list of laps that have been run for this timer.
+     * Holds a list of steps that have been run for this timer.
      * 
      * @var array
      */
-    protected $_laps = array();
+    protected $_steps = array();
 
     /**
-     * Currently running lap.
+     * Currently running step.
      * 
-     * @var TimerLap
+     * @var TimerStep
      */
-    private $_currentLap;
+    private $_currentStep;
     
     /**
      * Constructor.
@@ -99,7 +99,7 @@ class Timer
         $this->_startMemory = static::getCurrentMemory();
         $this->_startMemoryPeak = static::getCurrentMemoryPeak();
 
-        $this->_currentLap = new TimerLap(true, $this->_startTime, $this->_startMemory, $this->_startMemoryPeak);
+        $this->_currentStep = new TimerStep(true, $this->_startTime, $this->_startMemory, $this->_startMemoryPeak);
     }
     
     /**
@@ -119,21 +119,30 @@ class Timer
         $this->_stopMemory = static::getCurrentMemory();
         $this->_stopMemoryPeak = static::getCurrentMemoryPeak();
 
-        $this->lap(); // trigger lap to stop this final lap
+        $this->step(); // trigger step() to stop this final step
 
         return static::difference($this->_startTime, $this->_stopTime, $precision);
     }
 
-    public function lap($name = null) {
-        $this->_currentLap->stop();
+    /**
+     * Stops the current step, starts a new one and returns the stopped one.
+     * 
+     * @param string $name [optional] Name of the step that should be returned.
+     * @return TimerStep
+     */
+    public function step($name = null) {
+        $step = $this->_currentStep;
+        $step->stop();
 
-        $this->_laps[] = array(
+        $this->_steps[] = array(
             'name' => $name ? $name : count($this->_laps) + 1,
-            'lap' => $this->_currentLap
+            'step' => $step
         );
 
-        // start a new lap
-        $this->_currentLap = new TimerLap(true, $this->_currentLap->getStopTime(), $this->_currentLap->getStopMemory(), $this->_currentLap->getStopMemoryPeak());
+        // start a new step
+        $this->_currentStep = new TimerStep(true, $step->getStopTime(), $step->getStopMemory(), $step->getStopMemoryPeak());
+
+        return $step;
     }
 
     /*****************************************************
@@ -210,12 +219,12 @@ class Timer
     }
 
     /**
-     * Returns the laps.
+     * Returns the steps.
      * 
      * @return array
      */
-    public function getLaps() {
-        return $this->_laps;
+    public function getSteps() {
+        return $this->_steps;
     }
 
     /*****************************************************
