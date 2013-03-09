@@ -130,6 +130,18 @@ class Debugger
     }
 
     /**
+     * Converts the given PHP callable to a string that should contain its' name.
+     * 
+     * @param callable $callable
+     * @return string
+     * 
+     * @todo
+     */
+    public static function callableToString($callable) {
+        return 'callable (@todo)';
+    }
+
+    /**
      * Friendly output of variables. It will print them out in <pre class="md-dump"> tag.
      * 
      * @param object $variable Variable to be dumped.
