@@ -273,61 +273,30 @@ class StringUtils
     }
     
     /**
-     * Temporary holder for variables that will be passed to parseVariables callback.
-     * 
-     * @var array
-     */
-    private static $_parseVariables = array();
-    
-    /**
      * Parses the given string looking for variables to insert to from the given set of variables.
      * 
-     * Ie. Looks for occurrences of variables like {$foo} or {bar} and replaces them with values found under
+     * Ie. Looks for occurrences of variables like {foo} or {bar} and replaces them with values found under
      * keys 'foo' or 'bar' (respectively) in the given set of variables.
-     * The variable in the string can be either defined with a $ sign or without it.
-     * If the variable is defined with a $ sign, then it will be removed from the final output even if the specified variable wasn't passed.
-     * If the variable is defined without a $ sign and there is no such variable passed, then the final output will contain the original. I.e.:
-     * {$variable} => '' if no variable value,
-     * {variable} => {variable} if no variable value.
      *
      * @param string $string String to parse.
      * @param mixed $variables Either an array or an object with variables.
      * @return string
      */
     public static function parseVariables($string, $variables) {
-        // make $variables 'global' for a second..
-        static::$_parseVariables = $variables;
+        $string = preg_replace_callback('#{([\w\d_\.]+)}#is', function($matches) use ($variables) {
+            $var = $matches[1];
+
+            $value = '';
+            if (is_object($variables) AND isset($variables->$var)) {
+                $value = (string)$variables->$var;
+            } elseif (isset($variables[$var])) {
+                $value = (string)$variables[$var];
+            }
+
+            return $value;
+        }, $string);
         
-        $string = preg_replace_callback('#{(\$?[\w\d]+)}#is', array('static', '_parseVariablesCallback'), $string);
-        
-        // clean after ourselves
-        static::$_parseVariables = array();
         return $string;
-    }
-    
-    /**
-     * A callback helper that is used by StringUtils::parseVariables() method.
-     * 
-     * @param array $matches
-     * @return string
-     */
-    private static function _parseVariablesCallback($matches) {
-        $variables = static::$_parseVariables;
-        $var = $matches[1];
-
-        $hasDollar = (substr($var, 0, 1) == '$');
-        $var = ltrim($var, '$');
-
-        $value = '';
-        if (is_object($variables) AND isset($variables->$var)) {
-            $value = $variables->$var;
-        } elseif (isset($variables[$var])) {
-            $value = $variables[$var];
-        } elseif (!$hasDollar) {
-            $value = '{'. $var .'}';
-        }
-
-        return $value;
     }
     
     /**
