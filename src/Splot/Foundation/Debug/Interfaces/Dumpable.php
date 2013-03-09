@@ -14,11 +14,11 @@ namespace Splot\Foundation\Debug\Interfaces;
 interface Dumpable
 {
 
-	/**
-	 * Returns the object in a form of printable array.
-	 * 
-	 * @return array
-	 */
-	public function toDumpableArray();
+    /**
+     * Returns the object in a form of printable array.
+     * 
+     * @return array
+     */
+    public function toDumpableArray();
 
 }

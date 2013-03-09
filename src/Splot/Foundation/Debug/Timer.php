@@ -15,13 +15,13 @@ use Splot\Foundation\Debug\TimerLap;
 
 class Timer
 {
-	
-	/**
-	 * When the timer has started.
-	 * 
-	 * @var float
-	 */
-	protected $_startTime;
+    
+    /**
+     * When the timer has started.
+     * 
+     * @var float
+     */
+    protected $_startTime;
 
     /**
      * How much memory was used when the timer started.
@@ -37,12 +37,12 @@ class Timer
      */
     protected $_startMemoryPeak;
 
-	/**
-	 * When the timer has stopped.
-	 * 
-	 * @var float
-	 */
-	protected $_stopTime;
+    /**
+     * When the timer has stopped.
+     * 
+     * @var float
+     */
+    protected $_stopTime;
 
     /**
      * How much memory was used when the timer stopped.
@@ -71,58 +71,58 @@ class Timer
      * @var TimerLap
      */
     private $_currentLap;
-	
-	/**
-	 * Constructor.
+    
+    /**
+     * Constructor.
      * 
      * Starts the timer automatically by default.
-	 * 
-	 * @param bool $instantStart [optional] Should the timer be started immediately? Default: true.
-	 */
-	public function __construct($instantStart = true) {
-		if ($instantStart) {
-			$this->start();
-		}
-	}
-	
-	/**
-	 * Start the timer.
+     * 
+     * @param bool $instantStart [optional] Should the timer be started immediately? Default: true.
+     */
+    public function __construct($instantStart = true) {
+        if ($instantStart) {
+            $this->start();
+        }
+    }
+    
+    /**
+     * Start the timer.
      * 
      * @throws \BadMethodCallException When the timer was already started.
-	 */
-	public function start() {
+     */
+    public function start() {
         if ($this->_startTime) {
             throw new \BadMethodCallException('Timer already started.');
         }
 
-		$this->_startTime = static::getMicroTime();
+        $this->_startTime = static::getMicroTime();
         $this->_startMemory = static::getCurrentMemory();
         $this->_startMemoryPeak = static::getCurrentMemoryPeak();
 
         $this->_currentLap = new TimerLap(true, $this->_startTime, $this->_startMemory, $this->_startMemoryPeak);
-	}
-	
-	/**
-	 * Stop the timer and return the result.
-	 * 
-	 * @param int $precision [optional] How many places to round to. Default: 8
-	 * @return float Duration in seconds.
+    }
+    
+    /**
+     * Stop the timer and return the result.
+     * 
+     * @param int $precision [optional] How many places to round to. Default: 8
+     * @return float Duration in seconds.
      * 
      * @throws \BadMethodCallException When the timer was already stopped.
-	 */
-	public function stop($precision = 8) {
+     */
+    public function stop($precision = 8) {
         if ($this->_stopTime) {
             throw new \BadMethodCallException('Timer already stopped.');
         }
 
-		$this->_stopTime = static::getMicroTime();
+        $this->_stopTime = static::getMicroTime();
         $this->_stopMemory = static::getCurrentMemory();
         $this->_stopMemoryPeak = static::getCurrentMemoryPeak();
 
         $this->lap(); // trigger lap to stop this final lap
 
-		return static::difference($this->_startTime, $this->_stopTime, $precision);
-	}
+        return static::difference($this->_startTime, $this->_stopTime, $precision);
+    }
 
     public function lap($name = null) {
         $this->_currentLap->stop();
@@ -254,15 +254,15 @@ class Timer
         return $this->_startMemoryPeak;
     }
 
-	/**
-	 * Creates an easier to use value of PHP's microtime()
-	 * 
-	 * @return float Time with seconds and microseconds.
-	 */
-	public static function getMicroTime() {
-		list($microSec, $sec) = explode(' ', microtime());
-		return $sec + $microSec;
-	}
+    /**
+     * Creates an easier to use value of PHP's microtime()
+     * 
+     * @return float Time with seconds and microseconds.
+     */
+    public static function getMicroTime() {
+        list($microSec, $sec) = explode(' ', microtime());
+        return $sec + $microSec;
+    }
 
     /**
      * Returns the current memory usage.
@@ -281,5 +281,5 @@ class Timer
     public static function getCurrentMemoryPeak() {
         return memory_get_peak_usage(true);
     }
-	
+    
 }
