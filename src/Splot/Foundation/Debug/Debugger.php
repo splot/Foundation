@@ -27,59 +27,6 @@ class Debugger
 {
 
 	/**
-	 * Container for all kinds of timers running in the script.
-	 * 
-	 * @var array
-	 */
-	private static $_timers = array();
-
-	/**
-	 * Starts a debug timer with the given name.
-	 * 
-	 * @param string $name Unique name of the timer.
-	 * @return Timer
-	 * 
-	 * @throws NotUniqueException When timer with the given name already exists.
-	 */
-	public static function startTimer($name) {
-		if (isset(self::$_timers[$name])) {
-			throw new NotUniqueException('Timer with name "'. $name .'" already exists.');
-		}
-
-		$timer = new Timer();
-		self::$_timers[$name] = $timer;
-		return $timer;
-	}
-
-	/**
-	 * Returns a timer of the given name.
-	 * 
-	 * @return Timer
-	 * 
-	 * @throws NotExistsException When the requested timer does not exist.
-	 */
-	public static function getTimer($name) {
-		if (!isset(self::$_timers[$name])) {
-			throw new NotFoundException('Timer with name "'. $name .'" does not exist.');
-		}
-
-		return self::$_timers[$name];
-	}
-
-	/**
-	 * Returns a time on the timer of the given name.
-	 * 
-	 * @param string $name Name of the timer to access.
-	 * @param int $roundPlaces [optional] How many places to round to. Default: 3
-	 * @return float
-	 * 
-	 * @throws NotExistsException When the requested timer does not exist.
-	 */
-	public static function getTime($name, $roundPlaces = 3) {
-		return self::getTimer($name)->getTime(false, $roundPlaces);
-	}
-
-	/**
 	 * Returns type of the given variable.
 	 * 
 	 * Similiar to PHP's gettype() function, but instead of "object" it will return an actual class name.
@@ -191,7 +138,7 @@ class Debugger
 	 * @return string
 	 */
 	public static function dump($variable, $toString = false) {
-		$dump = '<pre style="background-color: white; color: black;" class="md-dump">';
+		$dump = '<pre style="background-color: white; color: black;" class="splot-dump">';
 		if (is_array($variable)) {
 			$dump .= self::_arrayToString($variable);
 		} elseif (is_object($variable)) {
