@@ -215,7 +215,7 @@ class Timer
      * @return int
      */
     public function getStopMemory() {
-        return $this->_startMemory;
+        return $this->_stopMemory;
     }
 
     /**
@@ -260,7 +260,7 @@ class Timer
      * @return int
      */
     public function getStopMemoryPeak() {
-        return $this->_startMemoryPeak;
+        return $this->_stopMemoryPeak;
     }
 
     /**
