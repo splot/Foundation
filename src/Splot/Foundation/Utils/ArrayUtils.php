@@ -348,9 +348,52 @@ class ArrayUtils
             }
         }
     }
+
+    /**
+     * Performs a merge between n arrays, where the last array has the highest priority.
+     * 
+     * @param array $array1
+     * @param array $array2
+     * @param array $array3
+     * ...
+     * @return array
+     */
+    public static function merge() {
+        $target = array();
+        $arrays = func_get_args();
+
+        foreach($arrays as $i => $array) {
+            if (!is_array($array)) {
+                throw new \InvalidArgumentException('Argument #'. $i .' supplied to '. get_called_class() .'::merge() must be array, '. get_type($array) .' given.');
+            }
+
+            $target = static::mergeDeep($target, $array);
+        }
+
+        return $target;
+    }
+
+    /**
+     * Performs a deep merge between two arrays.
+     * 
+     * @param array $into Array to merge into.
+     * @param array $from Array to merge to.
+     * @return array
+     */
+    public static function mergeDeep(array $into, array $from) {
+        foreach($from as $key => $value) {
+            if (is_array($value)) {
+                $into[$key] = (isset($into[$key])) ? static::mergeDeep($into[$key], $value) : $value;
+            } else {
+                $into[$key] = $value;
+            }
+        }
+
+        return $into;
+    }
     
     /**
-     * Merges (JOINS) the second collection into the first based a given key. Default is outer join meaning
+     * Joins the second collection into the first based a given key. Default is outer join meaning
      * that if matching row wasn't found in the second collection the row in the first collection will still
      * be displayed (this can be altered by setting the 6th argument to 'inner').
      * 
@@ -365,7 +408,7 @@ class ArrayUtils
      *                  from $array1 that haven't got values in $array2.
      * @return array
      */
-    public static function merge($array1, $array2, $onKey, $underKey = null, $array2Key = null, $type = 'outer') {
+    public static function join($array1, $array2, $onKey, $underKey = null, $array2Key = null, $type = 'outer') {
         if ((!is_array($array1)) OR (empty($array1))) return array();
         
         $array2Key = ($array2Key) ? $array2Key : $onKey;
